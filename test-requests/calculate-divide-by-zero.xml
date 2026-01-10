@@ -1,0 +1,13 @@
+<!-- Test Case 6: Calculate DIVIDE by zero (Error Case) -->
+<!-- Expected: SOAP Fault with message "Division by zero is not allowed" -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+               xmlns:cal="http://example.com/calculator">
+   <soap:Header/>
+   <soap:Body>
+      <cal:calculate>
+         <cal:operand1>100</cal:operand1>
+         <cal:operand2>0</cal:operand2>
+         <cal:operation>DIVIDE</cal:operation>
+      </cal:calculate>
+   </soap:Body>
+</soap:Envelope>

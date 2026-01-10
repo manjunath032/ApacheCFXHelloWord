@@ -1,0 +1,14 @@
+<!-- Test Case 9: Calculate with lowercase operation (testing case insensitivity) -->
+<!-- Expected: result = 48.0, operation = MULTIPLY (normalized to uppercase) -->
+<!-- Expected ResponseDetails: timestamp, serverId, processingTime populated -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+               xmlns:cal="http://example.com/calculator">
+   <soap:Header/>
+   <soap:Body>
+      <cal:calculate>
+         <cal:operand1>6</cal:operand1>
+         <cal:operand2>8</cal:operand2>
+         <cal:operation>multiply</cal:operation>
+      </cal:calculate>
+   </soap:Body>
+</soap:Envelope>

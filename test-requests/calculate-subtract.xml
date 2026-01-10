@@ -1,0 +1,14 @@
+<!-- Test Case 2: Calculate SUBTRACT operation -->
+<!-- Expected: result = 50.0, operation = SUBTRACT (normalized to uppercase) -->
+<!-- Expected ResponseDetails: timestamp, serverId, processingTime populated -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+               xmlns:cal="http://example.com/calculator">
+   <soap:Header/>
+   <soap:Body>
+      <cal:calculate>
+         <cal:operand1>100</cal:operand1>
+         <cal:operand2>50</cal:operand2>
+         <cal:operation>subtract</cal:operation>
+      </cal:calculate>
+   </soap:Body>
+</soap:Envelope>

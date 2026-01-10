@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: apache-cxf-spring-boot
+
+cxf:
+  path: /services
+  servlet:
+    init:
+      service-list-path: /info

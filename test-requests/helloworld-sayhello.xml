@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                  xmlns:hel="http://example.com/helloworld">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <hel:sayHello>
+         <name>Spring Boot Developer</name>
+      </hel:sayHello>
+   </soapenv:Body>
+</soapenv:Envelope>

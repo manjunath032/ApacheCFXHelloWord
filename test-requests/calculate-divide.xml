@@ -1,0 +1,14 @@
+<!-- Test Case 4: Calculate DIVIDE operation -->
+<!-- Expected: result = 5.0, operation = DIVIDE (normalized to uppercase) -->
+<!-- Expected ResponseDetails: timestamp, serverId, processingTime populated -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+               xmlns:cal="http://example.com/calculator">
+   <soap:Header/>
+   <soap:Body>
+      <cal:calculate>
+         <cal:operand1>100</cal:operand1>
+         <cal:operand2>20</cal:operand2>
+         <cal:operation>divide</cal:operation>
+      </cal:calculate>
+   </soap:Body>
+</soap:Envelope>

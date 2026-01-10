@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                  xmlns:cal="http://example.com/calculator">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cal:calculate>
+         <cal:operand1>25</cal:operand1>
+         <cal:operand2>5</cal:operand2>
+         <cal:operation>MULTIPLY</cal:operation>
+      </cal:calculate>
+   </soapenv:Body>
+</soapenv:Envelope>

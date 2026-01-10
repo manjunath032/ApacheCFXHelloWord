@@ -38,7 +38,8 @@ try {
 Write-Host ""
 Write-Host "[4/7] Testing SOAP request..." -ForegroundColor Yellow
 $soapRequest = @"
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cal="http://example.com/generated/calculator">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cal="http://example.com/calculator">
+   <soapenv:Header/>
    <soapenv:Body>
       <cal:multiply>
          <cal:a>10</cal:a>
@@ -49,12 +50,12 @@ $soapRequest = @"
 "@
 
 try {
-    $response = Invoke-WebRequest -Uri "http://localhost:8080/services/CalculatorService" -Method POST -ContentType "text/xml" -Body $soapRequest -ErrorAction Stop
+    $response = Invoke-WebRequest -Uri "http://localhost:8080/services/Calculator" -Method POST -ContentType "text/xml; charset=utf-8" -Body $soapRequest -UseBasicParsing -ErrorAction Stop
     Write-Host "First request: SUCCESS (Status $($response.StatusCode))" -ForegroundColor Green
     
     Start-Sleep -Seconds 1
     
-    $response2 = Invoke-WebRequest -Uri "http://localhost:8080/services/CalculatorService" -Method POST -ContentType "text/xml" -Body $soapRequest -ErrorAction Stop
+    $response2 = Invoke-WebRequest -Uri "http://localhost:8080/services/Calculator" -Method POST -ContentType "text/xml; charset=utf-8" -Body $soapRequest -UseBasicParsing -ErrorAction Stop
     Write-Host "Second request: SUCCESS (Status $($response2.StatusCode)) - Should be cached" -ForegroundColor Green
 } catch {
     Write-Host "ERROR: SOAP request failed - $($_.Exception.Message)" -ForegroundColor Red
@@ -97,7 +98,7 @@ Write-Host ""
 Write-Host "Testing application after failover..." -ForegroundColor White
 Start-Sleep -Seconds 5
 try {
-    $response3 = Invoke-WebRequest -Uri "http://localhost:8080/services/CalculatorService" -Method POST -ContentType "text/xml" -Body $soapRequest -ErrorAction Stop
+    $response3 = Invoke-WebRequest -Uri "http://localhost:8080/services/Calculator" -Method POST -ContentType "text/xml; charset=utf-8" -Body $soapRequest -UseBasicParsing -ErrorAction Stop
     Write-Host "Request after failover: SUCCESS (Status $($response3.StatusCode))" -ForegroundColor Green
 } catch {
     Write-Host "WARNING: Request failed after failover - $($_.Exception.Message)" -ForegroundColor Yellow

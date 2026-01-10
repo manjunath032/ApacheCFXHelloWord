@@ -1,5 +1,6 @@
 package com.example.cxf.config;
 
+import com.example.cxf.interceptor.SoapTransactionIdInterceptor;
 import com.example.cxf.service.impl.CalculatorServiceImpl;
 import jakarta.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
@@ -20,14 +21,21 @@ public class CalculatorConfig {
     
     @Autowired
     private CalculatorServiceImpl calculatorService;
+
+    @Autowired
+    private SoapTransactionIdInterceptor soapTransactionIdInterceptor;
     
     @Bean
     public Endpoint calculatorEndpoint() {
         logger.debug("Entering calculatorEndpoint() - Configuring SOAP endpoint");
         try {
             EndpointImpl endpoint = new EndpointImpl(bus, calculatorService);
+            
+            // Add transaction ID interceptor for SOAP requests
+            endpoint.getInInterceptors().add(soapTransactionIdInterceptor);
+            
             endpoint.publish("/Calculator");
-            logger.info("SOAP endpoint published successfully at /Calculator");
+            logger.info("SOAP endpoint published successfully at /Calculator with transaction ID tracking");
             logger.debug("Exiting calculatorEndpoint() - Endpoint configured");
             return endpoint;
         } catch (Exception e) {

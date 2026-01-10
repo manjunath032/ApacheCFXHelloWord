@@ -1,4 +1,4 @@
-package com.example.cxf.config;
+package com.example.cxf.cache;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

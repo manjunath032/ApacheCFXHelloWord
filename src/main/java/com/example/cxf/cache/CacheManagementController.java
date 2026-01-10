@@ -1,4 +1,4 @@
-package com.example.cxf.rest.controller;
+package com.example.cxf.cache;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

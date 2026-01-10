@@ -5,7 +5,11 @@ spring:
   application:
     name: apache-cxf-spring-boot
   
-  # Redis Configuration
+  # Default profile (can be overridden with --spring.profiles.active=sentinel)
+  profiles:
+    active: default
+  
+  # Redis Configuration - Single Node (default)
   data:
     redis:
       host: localhost
@@ -27,6 +31,56 @@ spring:
       cache-null-values: false
       key-prefix: "calculator:"
       use-key-prefix: true
+
+---
+# Redis Sentinel Profile Configuration
+spring:
+  config:
+    activate:
+      on-profile: sentinel
+  
+  data:
+    redis:
+      # Sentinel configuration
+      sentinel:
+        master: mymaster
+        nodes:
+          - localhost:26379
+          - localhost:26380
+          - localhost:26381
+        password: # Leave empty if no password set
+      password: # Leave empty if no password set
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 3000ms
+          time-between-eviction-runs: 60s
+  
+  # Cache Configuration for Sentinel
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10 minutes (600000ms) - longer for distributed cache
+      cache-null-values: false
+      key-prefix: "calc:distributed:"
+      use-key-prefix: true
+
+# Management and Actuator Configuration (for both profiles)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
 
 cxf:
   path: /services

@@ -21,9 +21,6 @@ public class SerialDemo {
 
         System.out.println("a=" + save1.getA());
 
-
-
-
     }
 
 }

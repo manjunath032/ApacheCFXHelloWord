@@ -1,7 +1,7 @@
-package com.example.cxf.config;
+package com.example.cxf.soap.config;
 
-import com.example.cxf.interceptor.SoapTransactionIdInterceptor;
-import com.example.cxf.service.impl.CalculatorServiceImpl;
+import com.example.cxf.logging.SoapTransactionIdInterceptor;
+import com.example.cxf.soap.service.impl.CalculatorServiceImpl;
 import jakarta.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;

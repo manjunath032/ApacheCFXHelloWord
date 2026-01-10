@@ -1,7 +1,7 @@
-package com.example.cxf.service.impl;
+package com.example.cxf.soap.service.impl;
 
-import com.example.cxf.constant.ErrorCode;
-import com.example.cxf.util.LoggerUtil;
+import com.example.cxf.logging.ErrorCode;
+import com.example.cxf.logging.LoggerUtil;
 import com.example.generated.calculator.CalculatorPortType;
 import com.example.generated.calculator.ResponseDetails;
 import com.example.generated.calculator.ServiceFailoverFault_Exception;

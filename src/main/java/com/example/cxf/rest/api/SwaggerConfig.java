@@ -1,4 +1,4 @@
-package com.example.cxf.config;
+package com.example.cxf.rest.api;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

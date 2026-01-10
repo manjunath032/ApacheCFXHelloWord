@@ -1,4 +1,4 @@
-package com.example.cxf.constant;
+package com.example.cxf.logging;
 
 /**
  * Error codes for application-wide error tracking and logging.

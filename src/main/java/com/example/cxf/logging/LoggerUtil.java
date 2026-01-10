@@ -1,6 +1,5 @@
-package com.example.cxf.util;
+package com.example.cxf.logging;
 
-import com.example.cxf.constant.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 

@@ -1,4 +1,4 @@
-package com.example.cxf.filter;
+package com.example.cxf.logging;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

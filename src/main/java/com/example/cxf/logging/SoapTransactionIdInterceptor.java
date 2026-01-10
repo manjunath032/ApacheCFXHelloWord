@@ -1,4 +1,4 @@
-package com.example.cxf.interceptor;
+package com.example.cxf.logging;
 
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.AbstractSoapInterceptor;

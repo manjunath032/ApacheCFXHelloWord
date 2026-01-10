@@ -1,6 +1,6 @@
-package com.example.cxf.controller;
+package com.example.cxf.rest.controller;
 
-import com.example.cxf.service.impl.CalculatorServiceImpl;
+import com.example.cxf.soap.service.impl.CalculatorServiceImpl;
 import com.example.generated.calculator.ResponseDetails;
 import com.example.generated.calculator.ServiceFailoverFault_Exception;
 import io.swagger.v3.oas.annotations.Operation;

@@ -2,6 +2,8 @@ package com.example.cxf.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import java.util.Map;
 @Tag(name = "SOAP Service Info", description = "Information about available SOAP web services")
 public class SoapInfoController {
 
+    private static final Logger logger = LoggerFactory.getLogger(SoapInfoController.class);
+
     @Value("${server.port:8080}")
     private String serverPort;
 
@@ -30,6 +34,7 @@ public class SoapInfoController {
         description = "Returns information about all available SOAP web services, including WSDL URLs and operations"
     )
     public ResponseEntity<Map<String, Object>> listSoapServices() {
+        logger.debug("Entering listSoapServices()");
         Map<String, Object> response = new HashMap<>();
         
         String baseUrl = "http://localhost:" + serverPort;
@@ -97,6 +102,8 @@ public class SoapInfoController {
             "holderPattern", "Uses JAX-WS Holder<T> for IN/OUT/INOUT parameters"
         ));
         
+        logger.info("SOAP services list generated successfully");
+        logger.debug("Exiting listSoapServices()");
         return ResponseEntity.ok(response);
     }
 
@@ -106,6 +113,7 @@ public class SoapInfoController {
         description = "Returns the direct URL to access Calculator service WSDL"
     )
     public ResponseEntity<Map<String, String>> getCalculatorWsdlUrl() {
+        logger.debug("Calculator WSDL URL requested");
         String baseUrl = "http://localhost:" + serverPort;
         return ResponseEntity.ok(Map.of(
             "wsdlUrl", baseUrl + "/services/Calculator?wsdl",
@@ -120,6 +128,7 @@ public class SoapInfoController {
         description = "Returns detailed information about all SOAP operations available in Calculator service"
     )
     public ResponseEntity<List<Map<String, Object>>> getCalculatorOperations() {
+        logger.debug("Calculator operations list requested");
         return ResponseEntity.ok(List.of(
             createOperationDetail("add", "POST", 
                 "Add two integers and return the sum",
@@ -154,6 +163,7 @@ public class SoapInfoController {
         description = "Returns complete SOAP envelope examples for testing Calculator service"
     )
     public ResponseEntity<Map<String, String>> getTestRequests() {
+        logger.debug("Test requests examples requested");
         String baseUrl = "http://localhost:" + serverPort;
         return ResponseEntity.ok(Map.of(
             "soapEndpoint", baseUrl + "/services/Calculator",

@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Logs ###
+logs/*.log
+logs/*.log.*
+logs/*/*.log
+logs/*/*.log.*
+!logs/.gitkeep

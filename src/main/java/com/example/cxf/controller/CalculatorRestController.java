@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.xml.ws.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import java.util.Map;
 @Tag(name = "Calculator API", description = "REST API for calculator operations (wraps SOAP service)")
 public class CalculatorRestController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CalculatorRestController.class);
+
     @Autowired
     private CalculatorServiceImpl calculatorService;
 
@@ -41,6 +45,7 @@ public class CalculatorRestController {
             @Parameter(description = "Second number", example = "5")
             @RequestParam int b
     ) {
+        logger.debug("Entering REST add() - a={}, b={}", a, b);
         try {
             int result = calculatorService.add(a, b);
             Map<String, Object> response = new HashMap<>();
@@ -48,8 +53,11 @@ public class CalculatorRestController {
             response.put("operand1", a);
             response.put("operand2", b);
             response.put("result", result);
+            logger.info("REST add() completed: {} + {} = {}", a, b, result);
+            logger.debug("Exiting REST add() with result: {}", result);
             return ResponseEntity.ok(response);
         } catch (ServiceFailoverFault_Exception e) {
+            logger.error("Error in REST add(): {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", e.getMessage()));
         }
@@ -66,6 +74,7 @@ public class CalculatorRestController {
             @Parameter(description = "Second number", example = "5")
             @RequestParam int b
     ) {
+        logger.debug("Entering REST subtract() - a={}, b={}", a, b);
         try {
             int result = calculatorService.subtract(a, b);
             Map<String, Object> response = new HashMap<>();
@@ -73,8 +82,11 @@ public class CalculatorRestController {
             response.put("operand1", a);
             response.put("operand2", b);
             response.put("result", result);
+            logger.info("REST subtract() completed: {} - {} = {}", a, b, result);
+            logger.debug("Exiting REST subtract() with result: {}", result);
             return ResponseEntity.ok(response);
         } catch (ServiceFailoverFault_Exception e) {
+            logger.error("Error in REST subtract(): {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", e.getMessage()));
         }
@@ -91,6 +103,7 @@ public class CalculatorRestController {
             @Parameter(description = "Second number", example = "7")
             @RequestParam int b
     ) {
+        logger.debug("Entering REST multiply() - a={}, b={}", a, b);
         try {
             int result = calculatorService.multiply(a, b);
             Map<String, Object> response = new HashMap<>();
@@ -98,8 +111,11 @@ public class CalculatorRestController {
             response.put("operand1", a);
             response.put("operand2", b);
             response.put("result", result);
+            logger.info("REST multiply() completed: {} * {} = {}", a, b, result);
+            logger.debug("Exiting REST multiply() with result: {}", result);
             return ResponseEntity.ok(response);
         } catch (ServiceFailoverFault_Exception e) {
+            logger.error("Error in REST multiply(): {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", e.getMessage()));
         }
@@ -118,6 +134,7 @@ public class CalculatorRestController {
             @Parameter(description = "Denominator (cannot be zero)", example = "20")
             @RequestParam int b
     ) {
+        logger.debug("Entering REST divide() - a={}, b={}", a, b);
         try {
             double result = calculatorService.divide(a, b);
             Map<String, Object> response = new HashMap<>();
@@ -125,11 +142,15 @@ public class CalculatorRestController {
             response.put("operand1", a);
             response.put("operand2", b);
             response.put("result", result);
+            logger.info("REST divide() completed: {} / {} = {}", a, b, result);
+            logger.debug("Exiting REST divide() with result: {}", result);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
+            logger.warn("REST divide() - Division by zero: {} / {}", a, b);
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         } catch (ServiceFailoverFault_Exception e) {
+            logger.error("Error in REST divide(): {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", e.getMessage()));
         }
@@ -150,6 +171,8 @@ public class CalculatorRestController {
             @Parameter(description = "Operation type: ADD, SUBTRACT, MULTIPLY, or DIVIDE", example = "ADD")
             @RequestParam String operation
     ) {
+        logger.debug("Entering REST calculate() - operand1={}, operand2={}, operation={}", 
+                     operand1, operand2, operation);
         try {
             Holder<String> operationHolder = new Holder<>(operation);
             Holder<Double> resultHolder = new Holder<>();
@@ -172,11 +195,17 @@ public class CalculatorRestController {
                 response.put("responseDetails", details);
             }
 
+            logger.info("REST calculate() completed: {} {} {} = {}", 
+                       operand1, operation, operand2, resultHolder.value);
+            logger.debug("Exiting REST calculate() with result: {}", resultHolder.value);
+            
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
+            logger.warn("REST calculate() - Invalid input: {}", e.getMessage());
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         } catch (ServiceFailoverFault_Exception e) {
+            logger.error("Error in REST calculate(): {}", e.getMessage(), e);
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", e.getMessage()));
         }
@@ -188,6 +217,7 @@ public class CalculatorRestController {
         description = "Check if the calculator service is running"
     )
     public ResponseEntity<Map<String, String>> health() {
+        logger.debug("Health check requested");
         return ResponseEntity.ok(Map.of(
             "status", "UP",
             "service", "Calculator API",

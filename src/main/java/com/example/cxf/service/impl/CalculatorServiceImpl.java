@@ -1,5 +1,7 @@
 package com.example.cxf.service.impl;
 
+import com.example.cxf.constant.ErrorCode;
+import com.example.cxf.util.LoggerUtil;
 import com.example.generated.calculator.CalculatorPortType;
 import com.example.generated.calculator.ResponseDetails;
 import com.example.generated.calculator.ServiceFailoverFault_Exception;
@@ -84,15 +86,17 @@ public class CalculatorServiceImpl implements CalculatorPortType {
         logger.debug("Entering divide() method with parameters: a={}, b={}", a, b);
         try {
             if (b == 0) {
-                logger.warn("Division by zero attempted: {} / {}", a, b);
+                LoggerUtil.logWarn(logger, ErrorCode.DIVISION_BY_ZERO, "Division by zero attempted: {} / {}", a, b);
                 throw new IllegalArgumentException("Division by zero is not allowed");
             }
             double result = (double) a / b;
-            logger.info("Divide operation: {} / {} = {}", a, b, result);
+            LoggerUtil.logInfo(logger, ErrorCode.SUCCESS, "Divide operation: {} / {} = {}", a, b, result);
             logger.debug("Exiting divide() method with result: {}", result);
             return result;
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
-            logger.error("Error in divide() method: {}", e.getMessage(), e);
+            LoggerUtil.logError(logger, ErrorCode.CALCULATION_ERROR, "Error in divide() method: " + e.getMessage(), e);
             throw e;
         }
     }
@@ -127,14 +131,16 @@ public class CalculatorServiceImpl implements CalculatorPortType {
                     break;
                 case "DIVIDE":
                     if (operand2 == 0) {
-                        logger.warn("Division by zero attempted in calculate(): {} / {}", operand1, operand2);
+                        LoggerUtil.logError(logger, ErrorCode.DIVISION_BY_ZERO, 
+                            "Division by zero attempted in calculate(): {} / {}", operand1, operand2);
                         throw new IllegalArgumentException("Division by zero is not allowed");
                     }
                     calcResult = (double) operand1 / operand2;
                     symbol = "/";
                     break;
                 default:
-                    logger.warn("Invalid operation attempted: {}", op);
+                    LoggerUtil.logWarn(logger, ErrorCode.INVALID_OPERATION, 
+                        "Invalid operation attempted: {}", op);
                     throw new IllegalArgumentException("Unknown operation: " + op + 
                         ". Supported operations: ADD, SUBTRACT, MULTIPLY, DIVIDE");
             }
@@ -161,16 +167,22 @@ public class CalculatorServiceImpl implements CalculatorPortType {
                 
                 responseDetails.value = details;
                 
-                logger.info("Calculate operation: {} {} {} = {}", operand1, symbol, operand2, calcResult);
+                LoggerUtil.logInfo(logger, ErrorCode.SUCCESS, 
+                    "Calculate operation: {} {} {} = {}", operand1, symbol, operand2, calcResult);
                 logger.debug("Processing details - Time: {}ms, Server: {}", processingTime, serverId);
                 logger.debug("Exiting calculate() method with result: {}", calcResult);
                 
             } catch (Exception e) {
-                logger.error("Error creating response details in calculate(): {}", e.getMessage(), e);
+                LoggerUtil.logError(logger, ErrorCode.INTERNAL_ERROR, 
+                    "Error creating response details in calculate(): " + e.getMessage(), e);
                 throw new RuntimeException("Error creating response details", e);
             }
+        } catch (IllegalArgumentException e) {
+            // Re-throw validation errors (already logged with error code)
+            throw e;
         } catch (Exception e) {
-            logger.error("Error in calculate() method: {}", e.getMessage(), e);
+            LoggerUtil.logError(logger, ErrorCode.CALCULATION_ERROR, 
+                "Error in calculate() method: " + e.getMessage(), e);
             throw e;
         }
     }

@@ -3,13 +3,13 @@ Write-Host "`n=== Test 1: Calculate ADD with Transaction ID ===" -ForegroundColo
                   xmlns:cal="http://example.com/calculator"
                   xmlns:hdr="http://example.com/headers">
    <soapenv:Header>
-      <hdr:TransactionId>CALC-ADD-TEST-001</hdr:TransactionId>
+      <hdr:TransactionId>CALC-ADD-TEST-002</hdr:TransactionId>
    </soapenv:Header>
    <soapenv:Body>
       <cal:calculate>
          <cal:operand1>15</cal:operand1>
-         <cal:operand2>10</cal:operand2>
-         <cal:operation>ADD</cal:operation>
+         <cal:operand2>0</cal:operand2>
+         <cal:operation>DIVIDE</cal:operation>
       </cal:calculate>
    </soapenv:Body>
 </soapenv:Envelope>

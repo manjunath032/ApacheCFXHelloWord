@@ -24,8 +24,8 @@ import java.util.UUID;
 public class TransactionIdFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionIdFilter.class);
-    private static final String TRANSACTION_ID_HEADER = "X-Transaction-ID";
-    private static final String TRANSACTION_ID_MDC_KEY = "transactionId";
+    private static final String TRANSACTION_ID_HEADER = "X-Transaction-ID"; // For RESTful Services
+    private static final String TRANSACTION_ID_MDC_KEY = "transactionId"; // For SOAP Based Services
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

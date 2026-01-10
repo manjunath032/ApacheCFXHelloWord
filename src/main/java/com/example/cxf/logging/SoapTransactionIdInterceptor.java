@@ -24,7 +24,6 @@ public class SoapTransactionIdInterceptor extends AbstractSoapInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(SoapTransactionIdInterceptor.class);
     private static final String TRANSACTION_ID_HEADER = "TransactionId";
-    private static final String NAMESPACE = "http://example.com/headers";
     private static final String TRANSACTION_ID_MDC_KEY = "transactionId";
 
     public SoapTransactionIdInterceptor() {

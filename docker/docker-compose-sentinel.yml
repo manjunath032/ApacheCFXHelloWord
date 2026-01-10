@@ -64,9 +64,12 @@ services:
     container_name: redis-sentinel-1
     ports:
       - "26379:26379"
-    command: redis-sentinel /etc/redis/sentinel.conf
+    command: >
+      sh -c "cp /sentinel-config/sentinel.conf /tmp/sentinel.conf &&
+             chmod 666 /tmp/sentinel.conf &&
+             redis-sentinel /tmp/sentinel.conf"
     volumes:
-      - ./redis-sentinel/sentinel1.conf:/etc/redis/sentinel.conf
+      - ./redis-sentinel/sentinel1.conf:/sentinel-config/sentinel.conf:ro
     networks:
       - redis-sentinel-network
     depends_on:
@@ -79,9 +82,12 @@ services:
     container_name: redis-sentinel-2
     ports:
       - "26380:26379"
-    command: redis-sentinel /etc/redis/sentinel.conf
+    command: >
+      sh -c "cp /sentinel-config/sentinel.conf /tmp/sentinel.conf &&
+             chmod 666 /tmp/sentinel.conf &&
+             redis-sentinel /tmp/sentinel.conf"
     volumes:
-      - ./redis-sentinel/sentinel2.conf:/etc/redis/sentinel.conf
+      - ./redis-sentinel/sentinel2.conf:/sentinel-config/sentinel.conf:ro
     networks:
       - redis-sentinel-network
     depends_on:
@@ -94,9 +100,12 @@ services:
     container_name: redis-sentinel-3
     ports:
       - "26381:26379"
-    command: redis-sentinel /etc/redis/sentinel.conf
+    command: >
+      sh -c "cp /sentinel-config/sentinel.conf /tmp/sentinel.conf &&
+             chmod 666 /tmp/sentinel.conf &&
+             redis-sentinel /tmp/sentinel.conf"
     volumes:
-      - ./redis-sentinel/sentinel3.conf:/etc/redis/sentinel.conf
+      - ./redis-sentinel/sentinel3.conf:/sentinel-config/sentinel.conf:ro
     networks:
       - redis-sentinel-network
     depends_on:

@@ -9,6 +9,9 @@ import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -38,8 +41,14 @@ import java.util.GregorianCalendar;
 public class CalculatorServiceImpl implements CalculatorPortType {
 
     private static final Logger logger = LoggerFactory.getLogger(CalculatorServiceImpl.class);
+    private final CacheManager cacheManager;
+    
+    public CalculatorServiceImpl(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     @Override
+    @Cacheable(value = "operations", key = "'add:' + #a + ':' + #b")
     public int add(int a, int b) throws ServiceFailoverFault_Exception {
         logger.debug("Entering add() method with parameters: a={}, b={}", a, b);
         try {
@@ -54,6 +63,7 @@ public class CalculatorServiceImpl implements CalculatorPortType {
     }
 
     @Override
+    @Cacheable(value = "operations", key = "'subtract:' + #a + ':' + #b")
     public int subtract(int a, int b) throws ServiceFailoverFault_Exception {
         logger.debug("Entering subtract() method with parameters: a={}, b={}", a, b);
         try {
@@ -68,6 +78,7 @@ public class CalculatorServiceImpl implements CalculatorPortType {
     }
 
     @Override
+    @Cacheable(value = "operations", key = "'multiply:' + #a + ':' + #b")
     public int multiply(int a, int b) throws ServiceFailoverFault_Exception {
         logger.debug("Entering multiply() method with parameters: a={}, b={}", a, b);
         try {
@@ -82,6 +93,7 @@ public class CalculatorServiceImpl implements CalculatorPortType {
     }
 
     @Override
+    @Cacheable(value = "operations", key = "'divide:' + #a + ':' + #b", condition = "#b != 0")
     public double divide(int a, int b) throws ServiceFailoverFault_Exception {
         logger.debug("Entering divide() method with parameters: a={}, b={}", a, b);
         try {
@@ -112,37 +124,65 @@ public class CalculatorServiceImpl implements CalculatorPortType {
         
         long startTime = System.currentTimeMillis();
         String op = operation.value.toUpperCase();
+        String cacheKey = "calc:" + operand1 + ":" + operand2 + ":" + op;
+        
+        // Check cache first
+        Cache cache = cacheManager.getCache("calculations");
+        Double cachedResult = null;
+        if (cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(cacheKey);
+            if (wrapper != null) {
+                cachedResult = (Double) wrapper.get();
+                logger.info("[CACHE HIT] calculate() - Key: {}, Value: {}", cacheKey, cachedResult);
+            } else {
+                logger.info("[CACHE MISS] calculate() - Key: {}, Computing...", cacheKey);
+            }
+        }
+        
         double calcResult;
         String symbol;
         
         try {
-            switch (op) {
-                case "ADD":
-                    calcResult = operand1 + operand2;
-                    symbol = "+";
-                    break;
-                case "SUBTRACT":
-                    calcResult = operand1 - operand2;
-                    symbol = "-";
-                    break;
-                case "MULTIPLY":
-                    calcResult = operand1 * operand2;
-                    symbol = "*";
-                    break;
-                case "DIVIDE":
-                    if (operand2 == 0) {
-                        LoggerUtil.logError(logger, ErrorCode.DIVISION_BY_ZERO, 
-                            "Division by zero attempted in calculate(): {} / {}", operand1, operand2);
-                        throw new IllegalArgumentException("Division by zero is not allowed");
-                    }
-                    calcResult = (double) operand1 / operand2;
-                    symbol = "/";
-                    break;
-                default:
-                    LoggerUtil.logWarn(logger, ErrorCode.INVALID_OPERATION, 
-                        "Invalid operation attempted: {}", op);
-                    throw new IllegalArgumentException("Unknown operation: " + op + 
-                        ". Supported operations: ADD, SUBTRACT, MULTIPLY, DIVIDE");
+            // Use cached result if available
+            if (cachedResult != null) {
+                calcResult = cachedResult;
+                symbol = getSymbol(op);
+            } else {
+                // Perform calculation
+                switch (op) {
+                    case "ADD":
+                        calcResult = operand1 + operand2;
+                        symbol = "+";
+                        break;
+                    case "SUBTRACT":
+                        calcResult = operand1 - operand2;
+                        symbol = "-";
+                        break;
+                    case "MULTIPLY":
+                        calcResult = operand1 * operand2;
+                        symbol = "*";
+                        break;
+                    case "DIVIDE":
+                        if (operand2 == 0) {
+                            LoggerUtil.logError(logger, ErrorCode.DIVISION_BY_ZERO, 
+                                "Division by zero attempted in calculate(): {} / {}", operand1, operand2);
+                            throw new IllegalArgumentException("Division by zero is not allowed");
+                        }
+                        calcResult = (double) operand1 / operand2;
+                        symbol = "/";
+                        break;
+                    default:
+                        LoggerUtil.logWarn(logger, ErrorCode.INVALID_OPERATION, 
+                            "Invalid operation attempted: {}", op);
+                        throw new IllegalArgumentException("Unknown operation: " + op + 
+                            ". Supported operations: ADD, SUBTRACT, MULTIPLY, DIVIDE");
+                }
+                
+                // Store in cache
+                if (cache != null) {
+                    cache.put(cacheKey, calcResult);
+                    logger.info("[CACHE STORED] calculate() - Key: {}, Value: {}", cacheKey, calcResult);
+                }
             }
         
             long processingTime = System.currentTimeMillis() - startTime;
@@ -184,6 +224,16 @@ public class CalculatorServiceImpl implements CalculatorPortType {
             LoggerUtil.logError(logger, ErrorCode.CALCULATION_ERROR, 
                 "Error in calculate() method: " + e.getMessage(), e);
             throw e;
+        }
+    }
+    
+    private String getSymbol(String operation) {
+        switch (operation) {
+            case "ADD": return "+";
+            case "SUBTRACT": return "-";
+            case "MULTIPLY": return "*";
+            case "DIVIDE": return "/";
+            default: return "?";
         }
     }
 }

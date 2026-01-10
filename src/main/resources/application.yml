@@ -4,6 +4,29 @@ server:
 spring:
   application:
     name: apache-cxf-spring-boot
+  
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: # Leave empty if no password set
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+  
+  # Cache Configuration
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000  # 5 minutes (300000ms)
+      cache-null-values: false
+      key-prefix: "calculator:"
+      use-key-prefix: true
 
 cxf:
   path: /services

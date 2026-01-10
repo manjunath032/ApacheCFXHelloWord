@@ -8,7 +8,7 @@ Write-Host "`n=== Test 1: Calculate ADD with Transaction ID ===" -ForegroundColo
    <soapenv:Body>
       <cal:calculate>
          <cal:operand1>15</cal:operand1>
-         <cal:operand2>0</cal:operand2>
+         <cal:operand2>5</cal:operand2>
          <cal:operation>DIVIDE</cal:operation>
       </cal:calculate>
    </soapenv:Body>

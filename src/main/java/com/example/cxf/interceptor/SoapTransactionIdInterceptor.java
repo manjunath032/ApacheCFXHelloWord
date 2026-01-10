@@ -50,13 +50,19 @@ public class SoapTransactionIdInterceptor extends AbstractSoapInterceptor {
             }
         }
 
-        // Generate new transaction ID if not found
+        // If not in SOAP header, check if Filter already set one in MDC
         if (transactionId == null || transactionId.trim().isEmpty()) {
-            transactionId = UUID.randomUUID().toString();
-            logger.debug("Generated new transaction ID for SOAP request: {}", transactionId);
+            transactionId = MDC.get(TRANSACTION_ID_MDC_KEY);
+            if (transactionId != null && !transactionId.trim().isEmpty()) {
+                logger.debug("Using transaction ID from Filter (MDC): {}", transactionId);
+            } else {
+                // Only generate new UUID if neither SOAP header nor MDC has one
+                transactionId = UUID.randomUUID().toString();
+                logger.debug("Generated new transaction ID for SOAP request: {}", transactionId);
+            }
         }
 
-        // Add to MDC for logging
+        // Add to MDC for logging (update if extracted from SOAP header)
         MDC.put(TRANSACTION_ID_MDC_KEY, transactionId);
 
         logger.debug("SOAP request processing with transaction ID: {}", transactionId);

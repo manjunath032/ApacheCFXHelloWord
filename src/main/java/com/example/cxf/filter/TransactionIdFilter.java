@@ -58,10 +58,24 @@ public class TransactionIdFilter implements Filter {
             // Continue with the request
             chain.doFilter(request, response);
 
+            // Get the final transaction ID from MDC (may have been updated by SOAP interceptor)
+            String finalTransactionId = MDC.get(TRANSACTION_ID_MDC_KEY);
+            if (finalTransactionId == null) {
+                finalTransactionId = transactionId; // Fallback to original
+            }
+
+            // Log if transaction ID was changed by interceptor
+            if (!transactionId.equals(finalTransactionId)) {
+                logger.debug("Transaction ID was updated during processing: {} -> {}", transactionId, finalTransactionId);
+            }
+
+            // Add final transaction ID to response header
+            httpResponse.setHeader(TRANSACTION_ID_HEADER, finalTransactionId);
+
             logger.debug("Completed request: {} {} with transaction ID: {}", 
                         httpRequest.getMethod(), 
                         httpRequest.getRequestURI(), 
-                        transactionId);
+                        finalTransactionId);
 
         } finally {
             // Always clear MDC to avoid memory leaks in thread pools
